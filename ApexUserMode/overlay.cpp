@@ -170,6 +170,9 @@ bool overlay::DirectXInit() {
     ImGui_ImplWin32_Init(g_OverlayHwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dContext);
 
+    textures::load();
+    fonts::load();
+
     return true;
 }
 

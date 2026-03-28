@@ -51,9 +51,6 @@ uint64_t g_DbgEntityListVal = 0;   // first entry of entity list (slot 0)
 
 int main()
 {
-    textures::load();
-    fonts::load();
-
     ShowWindow(GetConsoleWindow(), SW_HIDE);
 
     if (!I::installDriver("")) {
