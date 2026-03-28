@@ -30,20 +30,44 @@ namespace fonts {
 	inline ImFont* calibrib = nullptr;
 
 	inline void load() {
-		std::string path_resources = getenv(crypt_str("APPDATA")) + std::string(crypt_str("\\Unk\\"));
+		std::string appdata = getenv(crypt_str("APPDATA")) ? getenv(crypt_str("APPDATA")) : "";
+		std::string path_resources = appdata + std::string(crypt_str("\\Unk\\"));
 
 		ImGuiIO& io = ImGui::GetIO(); (void)io;
 		ImFontConfig fontcfg{};
 		fontcfg.PixelSnapH = true;
 		fontcfg.OversampleH = fontcfg.OversampleV = 4;
+		
+		// Load base font
 		defaultFont = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\arial.ttf", 15.0f, &fontcfg, io.Fonts->GetGlyphRangesCyrillic());
 
 		auto fonts_folder = path_resources + crypt_str("resources\\fonts\\");
 		auto dinproF = fonts_folder + crypt_str("dinpro.ttf");
+		
+		// Check if custom font exists, otherwise fallback to default
+		DWORD dwAttrib = GetFileAttributesA(dinproF.c_str());
+		if (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+			dinpro = io.Fonts->AddFontFromFileTTF(dinproF.c_str(), 20.0f, &fontcfg, io.Fonts->GetGlyphRangesCyrillic());
+		} else {
+			dinpro = defaultFont;
+		}
 
-		dinpro = io.Fonts->AddFontFromFileTTF(dinproF.c_str(), 20.0f, &fontcfg, io.Fonts->GetGlyphRangesCyrillic());
+		auto calibribF = "C:\\Windows\\Fonts\\calibrib.ttf";
+		dwAttrib = GetFileAttributesA(calibribF);
+		if (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+			calibrib = io.Fonts->AddFontFromFileTTF(calibribF, 14.0f, &fontcfg, io.Fonts->GetGlyphRangesCyrillic());
+		} else {
+			calibrib = defaultFont;
+		}
 
-		calibrib = io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\calibrib.ttf", 14.0f, &fontcfg, io.Fonts->GetGlyphRangesCyrillic());
+		if (!defaultFont) {
+			// Extreme fallback if even arial is missing (unlikely on Windows)
+			io.Fonts->AddFontDefault();
+			defaultFont = io.Fonts->Fonts.back();
+			if (!dinpro) dinpro = defaultFont;
+			if (!calibrib) calibrib = defaultFont;
+		}
+
 		io.FontDefault = defaultFont;
 	}
 }

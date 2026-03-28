@@ -255,3 +255,51 @@ void RenderESP(const Matrix& vm)
     }
     g_DbgEntityCount = frameEntityCount;
 }
+
+static int CountSpectators(uint64_t localPlayer)
+{
+    if (!localPlayer) return 0;
+    int spectators = 0;
+
+    auto observerList = I::Read<uint64_t>(GameBase + OFFSET_OBSERVER_LIST);
+    if (!observerList) return 0;
+
+    for (int i = 0; i < 61; i++) {
+        auto entity = GetEntityById(i, GameBase);
+        if (!entity) continue;
+
+        int playerIndex = I::Read<int>(entity + 0x38);
+        int specIndex   = I::Read<int>(observerList + playerIndex * 8 + OFFSET_OBSERVER_INDEX);
+        auto specEntity = I::Read<uint64_t>(GameBase + OFFSET_ENTITY_LIST + ((specIndex & 0xFFFF) << 5));
+        if (specEntity == localPlayer) spectators++;
+    }
+    return spectators;
+}
+
+void RenderSpectatorCount()
+{
+    if (!g_Config.showSpectatorCount) return;
+
+    uint64_t lp = I::Read<uint64_t>(GameBase + OFFSET_LOCAL_PLAYER);
+    if (!lp) return;
+
+    int cnt = CountSpectators(lp);
+    if (cnt <= 0) return;
+
+    ImDrawList* dL = ImGui::GetBackgroundDrawList();
+    char buf[64];
+    sprintf_s(buf, "Spectators: %d", cnt);
+
+    ImFont* font = ImGui::GetFont();
+    float fontSize = ImGui::GetFontSize() * 2.5f;
+    ImVec2 ts = font->CalcTextSizeA(fontSize, FLT_MAX, 0.f, buf);
+
+    float pad = 20.f, bp = 15.f;
+    ImVec2 tp = ImVec2(ScreenSize.x - ts.x - pad - bp, pad + bp);
+    ImVec2 bMin = ImVec2(tp.x - bp, tp.y - bp);
+    ImVec2 bMax = ImVec2(tp.x + ts.x + bp, tp.y + ts.y + bp);
+
+    dL->AddRectFilled(bMin, bMax, ImColor(10, 10, 15, 200), 8.f);
+    dL->AddRect(bMin, bMax, ImColor(51, 140, 255, 180), 8.f, 0, 2.f);
+    dL->AddText(font, fontSize, tp, ImColor(80, 180, 255, 255), buf);
+}

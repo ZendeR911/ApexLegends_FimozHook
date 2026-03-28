@@ -9,7 +9,6 @@
 #include "features/camera.h"
 #include "features/entity.h"
 #include "features/esp.h"
-#include "menu/menu.h"
 #include "menu/zalupa/menu/menu.h"
 #include "features/glow.h"
 #include "features/strafe.h"
@@ -32,7 +31,8 @@ extern uint64_t g_DbgEntityListVal;
 
 // Overlay Globals
 HWND g_OverlayHwnd = nullptr;
-HWND g_GameHwnd = nullptr;
+HWND g_GameHwnd    = nullptr;
+ID3D11Device* g_pd3dDevice = nullptr;
 
 static ID3D11DeviceContext* g_pd3dContext = nullptr;
 static IDXGISwapChain* g_pSwapChain = nullptr;
@@ -133,6 +133,12 @@ bool overlay::InitWindow() {
         Sleep(10);
     }
 
+    if (g_OverlayHwnd) {
+        printf("[+] Overlay Window Created: 0x%p\n", g_OverlayHwnd);
+    } else {
+        printf("[-] Failed to create overlay window within 5s!\n");
+    }
+
     return (g_OverlayHwnd != nullptr);
 }
 
@@ -151,9 +157,13 @@ bool overlay::DirectXInit() {
     sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
     sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
+    printf("[*] Creating D3D11 Device and SwapChain...\n");
     D3D_FEATURE_LEVEL fl;
-    if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &fl, &g_pd3dContext)))
+    if (FAILED(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &sd, &g_pSwapChain, &g_pd3dDevice, &fl, &g_pd3dContext))) {
+        printf("[-] D3D11CreateDeviceAndSwapChain Failed!\n");
         return false;
+    }
+    printf("[+] D3D11 Device Created: 0x%p\n", g_pd3dDevice);
 
     ID3D11Texture2D* pBackBuffer;
     g_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
@@ -170,7 +180,9 @@ bool overlay::DirectXInit() {
     ImGui_ImplWin32_Init(g_OverlayHwnd);
     ImGui_ImplDX11_Init(g_pd3dDevice, g_pd3dContext);
 
+    printf("[*] Loading textures...\n");
     textures::load();
+    printf("[*] Loading fonts...\n");
     fonts::load();
 
     return true;
@@ -228,16 +240,15 @@ void overlay::Render() {
         g_DbgEntityListVal = I::Read<uint64_t>(GameBase + OFFSET_ENTITY_LIST);
         EntityManager::Update(GameBase, lp);
 
-        //ыныцылызацыя
         UpdateAimbot(g_CachedVM);
         RenderESP(g_CachedVM);
         RenderAimbotFOV();
         RenderCrosshair();
         RenderSpectatorCount();
-        RenderMenu();
 
-        if (g_Config.showMenu)
+        if (g_Config.showMenu) {
             Render::RenderMenu();
+        }
 
         UpdateBhop(GameBase);
         UpdateGlow(GameBase);

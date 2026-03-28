@@ -137,7 +137,6 @@
     <ClCompile Include="features\glow.cpp" />
     <ClCompile Include="features\EntityManager.cpp" />
     <ClCompile Include="features\strafe.cpp" />
-    <ClCompile Include="menu\menu.cpp" />
     <ClCompile Include="Imgui\imgui.cpp" />
     <ClCompile Include="Imgui\imgui_demo.cpp" />
     <ClCompile Include="Imgui\imgui_draw.cpp" />
@@ -161,7 +160,6 @@
     <ClInclude Include="features\glow.h" />
     <ClInclude Include="features\EntityManager.h" />
     <ClInclude Include="features\strafe.h" />
-    <ClInclude Include="menu\menu.h" />
     <ClInclude Include="Imgui\imconfig.h" />
     <ClInclude Include="Imgui\imgui.h" />
     <ClInclude Include="Imgui\imgui_impl_dx11.h" />

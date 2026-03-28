@@ -7,3 +7,4 @@
 
 void DrawCorneredBox(ImDrawList* dL, float x, float y, float w, float h, ImColor color, float thickness = 2.0f);
 void RenderESP(const Matrix& vm);
+void RenderSpectatorCount();

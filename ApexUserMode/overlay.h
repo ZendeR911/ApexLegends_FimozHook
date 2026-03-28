@@ -15,7 +15,7 @@
 #include "Imgui/imgui_impl_dx11.h"
 
 extern HWND g_OverlayHwnd;
-static ID3D11Device* g_pd3dDevice = nullptr;
+extern ID3D11Device* g_pd3dDevice;
 extern HWND g_GameHwnd;
 
 namespace overlay

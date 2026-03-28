@@ -26,7 +26,7 @@
 #include "features/aim.h"
 #include "features/camera.h"
 #include "features/entity.h"
-#include "menu/menu.h"
+//#include "menu/zalupa/menu.h"
 #include "menu/zalupa/textures.h"
 #include "features/glow.h"
 #include "features/strafe.h"
@@ -51,7 +51,7 @@ uint64_t g_DbgEntityListVal = 0;   // first entry of entity list (slot 0)
 
 int main()
 {
-    ShowWindow(GetConsoleWindow(), SW_HIDE);
+    printf("[*] Starting Apex Legends FimozHook...\n");
 
     if (!I::installDriver("")) {
         MessageBoxA(nullptr, "Failed to connect to driver!\nLoad the driver first.",
@@ -61,31 +61,52 @@ int main()
     g_DbgDriverOk = true;
 
     DWORD PID = 0;
+    const wchar_t* procNames[] = { L"r5apex.exe", L"r5apex_dx12.exe" };
+    
+    printf("[*] Waiting for Apex Legends (r5apex.exe or r5apex_dx12.exe)...\n");
     for (int i = 0; i < 30 && !PID; i++) {
-        PID = I::GetProcessIdByName(L"r5apex_dx12.exe");
-        if (!PID) { MessageBoxA(nullptr, "Waiting for Apex Legends...", "Waiting", MB_OK); }
+        for (const auto& name : procNames) {
+            PID = I::GetProcessIdByName(name);
+            if (PID) {
+                printf("[+] Found process: %ls (PID: %lu)\n", name, PID);
+                break;
+            }
+        }
+        if (!PID) Sleep(1000);
     }
+    
     if (!PID) {
-        MessageBoxA(nullptr, "Apex Legends not found.", "Error", MB_OK | MB_ICONERROR);
+        MessageBoxA(nullptr, "Apex Legends not found.\nMake sure the game is running (r5apex.exe or r5apex_dx12.exe).", "Error", MB_OK | MB_ICONERROR);
         return 1;
     }
     I::SetProcess(PID);
 
     for (int i = 0; i < 20 && !GameBase; i++) {
-        GameBase = I::GetModuleBase("r5apex_dx12.exe");
-        if (!GameBase) Sleep(3000);
+        GameBase = I::GetModuleBase("r5apex.exe");
+        if (!GameBase) GameBase = I::GetModuleBase("r5apex_dx12.exe");
+        if (!GameBase) {
+            printf("[!] Failed to get game module base, retrying (%d/20)...\n", i + 1);
+            Sleep(2000);
+        }
     }
     if (!GameBase) {
         MessageBoxA(nullptr, "Failed to get game module base.", "Error", MB_OK | MB_ICONERROR);
         return 1;
     }
+    printf("[+] Game Base: 0x%llX\n", (unsigned long long)GameBase);
 
     ScreenSize = { (float)GetSystemMetrics(SM_CXSCREEN), (float)GetSystemMetrics(SM_CYSCREEN) };
     g_GameHwnd = FindWindowA(NULL, "Apex Legends");
     if (!g_GameHwnd) {
-        MessageBoxA(nullptr, "Could not find Apex Legends window.", "Error", MB_OK);
+        // Fallback for different languages or window names
+        g_GameHwnd = FindWindowA("Respawn001", NULL);
+    }
+    
+    if (!g_GameHwnd) {
+        MessageBoxA(nullptr, "Could not find Apex Legends window.\nEnsure the game is not minimized and is in windowed/borderless mode.", "Error", MB_OK);
         return 1;
     }
+    printf("[+] Found Game Window: 0x%p\n", g_GameHwnd);
 
     if (!overlay::InitWindow()) {
         MessageBoxA(nullptr, "Failed to initialize overlay window.", "Error", MB_OK);
@@ -97,6 +118,8 @@ int main()
         return 1;
     }
 
+    printf("[+] Initialization complete. Hiding console and starting overlay.\n");
+    ShowWindow(GetConsoleWindow(), SW_HIDE);
     overlay::Render();
 
     overlay::Shutdown();
