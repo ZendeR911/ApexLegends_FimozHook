@@ -1,5 +1,5 @@
 ## Fuck EAC-AntiCheat
-![Gameplay Demo](eac-conspiracy (1).gif) 
+![Gameplay Demo](README/eac-conspiracy (1).gif) 
 ![hvh](caption.gif) 
 
 ## About 
