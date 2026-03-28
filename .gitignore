@@ -1,3 +1,29 @@
-/.vs
-/ApexUserMode/x64
-/x64
+# Visual Studio 
+.vs/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+*.user
+*.aps
+*.pdb
+*.log
+*.tlog
+*.recipe
+*.obj
+*.iobj
+*.ipdb
+*.lastbuildstate
+*.idb
+*.inf
+*.sys
+*.cat
+*.exe
+*.dll
+
+# Other
+bin/
+obj/
+ipch/
+*.sln.doccache
+*.suo
