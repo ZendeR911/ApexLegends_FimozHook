@@ -27,6 +27,7 @@
 #include "features/camera.h"
 #include "features/entity.h"
 #include "menu/menu.h"
+#include "menu/zalupa/textures.h"
 #include "features/glow.h"
 #include "features/strafe.h"
 #include "features/EntityManager.h"
@@ -50,6 +51,9 @@ uint64_t g_DbgEntityListVal = 0;   // first entry of entity list (slot 0)
 
 int main()
 {
+    textures::load();
+    fonts::load();
+
     ShowWindow(GetConsoleWindow(), SW_HIDE);
 
     if (!I::installDriver("")) {

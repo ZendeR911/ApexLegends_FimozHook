@@ -10,6 +10,7 @@
 #include "features/entity.h"
 #include "features/esp.h"
 #include "menu/menu.h"
+#include "menu/zalupa/menu/menu.h"
 #include "features/glow.h"
 #include "features/strafe.h"
 #include "features/EntityManager.h"
@@ -33,7 +34,6 @@ extern uint64_t g_DbgEntityListVal;
 HWND g_OverlayHwnd = nullptr;
 HWND g_GameHwnd = nullptr;
 
-static ID3D11Device* g_pd3dDevice = nullptr;
 static ID3D11DeviceContext* g_pd3dContext = nullptr;
 static IDXGISwapChain* g_pSwapChain = nullptr;
 static ID3D11RenderTargetView* g_pRenderTargetView = nullptr;
@@ -232,6 +232,10 @@ void overlay::Render() {
         RenderCrosshair();
         RenderSpectatorCount();
         RenderMenu();
+
+        if (g_Config.showMenu)
+            Render::RenderMenu();
+
         UpdateBhop(GameBase);
         UpdateGlow(GameBase);
 
