@@ -1,11 +1,10 @@
 ## Fuck EAC-AntiCheat
 ## Пионерлагерь Пыльная Радуга · Пшлнхй
-
-![FUCK](README/UnkBetaTest.gif)
+## UD = ULTRA DETECT
 
 ![EAC](README/caption.gif)
 
+![FUCK](README/UnkBetaTest.gif)
+
 ![ANTI-CHEAT](README/eac-conspiracy.gif)
 
-## About 
-UD = ULTRA DETECT
