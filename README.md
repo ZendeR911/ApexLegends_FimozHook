@@ -1,5 +1,5 @@
 ## Fuck EAC-AntiCheat
-## Название GIF
+## Пионерлагерь Пыльная Радуга · Пшлнхй
 
 ![FUCK](README/UnkBetaTest.gif)
 
