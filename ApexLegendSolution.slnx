@@ -1,0 +1,12 @@
+<Solution>
+  <Configurations>
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="ApexDriver/ApexDriver.vcxproj">
+    <Deploy />
+  </Project>
+  <Project Path="ApexUserMode/ApexUserMode.vcxproj" Id="cf2bec58-65e3-48f8-b93c-557ef58d65de">
+    <Platform Project="x64" />
+  </Project>
+</Solution>
