@@ -3,6 +3,4 @@
 ![hvh](caption.gif) 
 
 ## About 
-- C++
-- ImGui
-- HOOK
+xyi
