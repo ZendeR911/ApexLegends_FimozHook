@@ -8,4 +8,4 @@
 ![ANTI-CHEAT](README/eac-conspiracy.gif)
 
 ## About 
-xyi
+UD = ULTRA DETECT
